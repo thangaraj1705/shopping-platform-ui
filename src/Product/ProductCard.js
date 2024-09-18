@@ -26,6 +26,7 @@ const ProductCard = ({ product }) => {
                     )}
                 </div>
                 <button className="add-to-cart-button">Add to Cart</button>
+                
             </div>
         </div>
     );
