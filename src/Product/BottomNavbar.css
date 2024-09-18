@@ -1,0 +1,22 @@
+.bottom-navbar {
+    display: flex;
+    justify-content: space-between;  /* Space between the links */
+    background-color: #f0f1f3;
+    padding: 20px;
+    width: 80%; /* 70% width */
+    margin: 0 auto; /* Centering */
+    box-sizing: border-box;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.bottom-navbar a {
+    margin: 0 15px;
+    color: #2874f0;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.bottom-navbar a:hover {
+    color: #f68b1e;
+}

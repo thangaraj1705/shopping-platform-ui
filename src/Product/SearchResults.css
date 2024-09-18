@@ -1,0 +1,13 @@
+.search-results-page {
+    padding: 20px;
+}
+
+.search-results-page h2 {
+    margin-bottom: 20px;
+}
+
+.product-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
