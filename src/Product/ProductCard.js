@@ -2,13 +2,11 @@ import React from 'react';
 import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
-    const imagePath = require(`../img/${product.productImgPath}`);
-    console.log('Image path:',imagePath); 
     return (
         <div className="product-card">
             <div className="image-wrapper">
             <img 
-                    src={imagePath} 
+                    src={`/ProductsImg/${product.productImgPath}`} 
                     alt={product.productName} 
                     className="product-image" 
                 />

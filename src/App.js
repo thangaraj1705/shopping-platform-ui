@@ -15,6 +15,9 @@ import UploadOfferForm from './Admin/UploadOfferForm';
 import SearchResults from './Product/SearchResults';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import ProductTable from './Admin/ProductTable';
+import UserDetailsTable from './Admin/UserDetailsTable';
+import AdvertisementDetailsTable from './Admin/AdvertisementDetailsTable';
 
 
 
@@ -39,6 +42,10 @@ function App() {
                 <Route path="/search-results" element={<SearchResults />} />
 
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/product-table" element={<ProductTable />} />
+                <Route path="/userdetails-table" element={<UserDetailsTable />} />
+                <Route path="/advertisement-table" element={<AdvertisementDetailsTable />} />
+
                 <Route path="/add-product" element={<ProductForm />} />
                 <Route path="/add-advertisement" element={<UploadAdForm />} />
                 <Route path="/add-offer" element={<UploadOfferForm />} />

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './dash.css';
-import { FaBox, FaUsers,FaBullhorn  } from 'react-icons/fa';
+import { FaBox, FaUsers, FaBullhorn } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
     const [totalProducts, setTotalProducts] = useState(0);
-    const [Users, setUsers] = useState(0); 
-    const [Ads, setAds] = useState(0); 
+    const [Users, setUsers] = useState(0);
+    const [Ads, setAds] = useState(0);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -36,22 +37,29 @@ const Dashboard = () => {
     }, []);
 
     return (
-      <div className="dashboard">
-          <div className="statistics-chart">           
-              <div className="chart-item">
-                  <FaUsers className="chart-icon" />
-                  <div className="chart-value">{Users}</div>
-              </div>
-              <div className="chart-item">
-                  <FaBox className="chart-icon" />
-                  <div className="chart-value">{totalProducts}</div>
-              </div>
-              <div className="chart-item">
-                  <FaBullhorn  className="chart-icon" />
-                  <div className="chart-value">{Ads}</div>
-              </div>
-          </div>
-  </div>
-);
+        <div className="dashboard">
+            <div className="statistics-chart">
+                <Link to="/userdetails-table">
+                    <div className="chart-item">
+                        <FaUsers className="chart-icon" />
+                        <div className="chart-value">{Users}</div>
+                    </div>
+                </Link>
+                <Link to="/product-table">
+                    <div className="chart-item">
+                        <FaBox className="chart-icon" />
+                        <div className="chart-value">{totalProducts}</div>
+                    </div>
+                </Link>
+
+                <Link to="/advertisement-table">
+                    <div className="chart-item">
+                        <FaBullhorn className="chart-icon" />
+                        <div className="chart-value">{Ads}</div>
+                    </div>
+                </Link>
+            </div>
+        </div>
+    );
 };
 export default Dashboard;
