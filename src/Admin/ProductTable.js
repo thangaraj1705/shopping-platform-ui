@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ProductTable.css';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const ProductTable = () => {
   const [products, setProducts] = useState([]);
+  const navigate=useNavigate();
 
   useEffect(() => {
     fetchProducts();
@@ -48,9 +50,10 @@ const ProductTable = () => {
 
   };
 
-  const handleUpdate = (id) => {
-    console.log(`Update product with ID: ${id}`);
-    // Add update logic here
+  const handleUpdate = (id, name) => {
+    navigate(`/update-product/${encodeURIComponent(name)}`, {
+      state: { productId: id }, 
+    });
   };
 
   return (
@@ -79,7 +82,7 @@ const ProductTable = () => {
               <td>{product.productDiscount}%</td>
               <td>{product.productRating}</td>
               <td>
-                <button className="btn update-btn" onClick={() => handleUpdate(product.productId)}>
+                <button className="btn update-btn" onClick={() => handleUpdate(product.productId, product.productName)}>
                   <FaEdit /> Update
                 </button>
                 <button className="btn delete-btn" onClick={() => handleDelete(product.productId)}>

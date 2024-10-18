@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ProductTable.css';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
 
 const UserDetailsTable = () => {
   const [users, setUsers] = useState([]);
@@ -48,15 +48,11 @@ const UserDetailsTable = () => {
     }
   };
 
-  const handleUpdate = (id) => {
-    console.log(`Update user with ID: ${id}`);
-    // Add update logic here
-  };
 
   return (
     <div className="table-container">
       <table className="product-table">
-        <thead>
+        <thead className="table-head">
           <tr>
             <th>Id</th>
             <th>First Name</th>
@@ -70,16 +66,13 @@ const UserDetailsTable = () => {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <td>{user.id}</td> {/* Ensure you have this field */}
+              <td>{user.id}</td> 
               <td>{user.firstName}</td>
               <td>{user.lastName}</td>
               <td>{user.username}</td>
               <td>{user.email}</td>
-              <td>{user.mobileNumber}</td> {/* Adjust to match your user object */}
+              <td>{user.mobileNumber}</td> 
               <td>
-                <button className="btn update-btn" onClick={() => handleUpdate(user.id)}>
-                  <FaEdit /> Update
-                </button>
                 <button className="btn delete-btn" onClick={() => handleDelete(user.id)}>
                   <FaTrash /> Delete
                 </button>

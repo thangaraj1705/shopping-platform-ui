@@ -86,3 +86,44 @@
 .input-file {
     font-size: 16px;
 }
+
+.form-group.radio-line {
+    display: flex;
+    justify-content: space-between; 
+    gap: 2rem; 
+}
+
+.radio-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem; 
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+.input-container {
+    display: flex; 
+    width: 100%; 
+}
+
+.form-input-nutrition {
+        padding: 0.5rem; 
+        border: 1px solid #ccc; 
+        border-radius: 4px; 
+        width: 70%; 
+        margin-right: 10px; 
+    }
+    
+    .form-select {
+        padding: 0.5rem; 
+        border: 1px solid #ccc; 
+        border-radius: 4px; 
+        width: 30%; 
+    }

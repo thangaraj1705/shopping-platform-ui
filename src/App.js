@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, useLocation} from 'react-router-dom';
+import { Routes, Route, useLocation, matchPath } from 'react-router-dom';
 import SignUp from './Login/SignUp';
 import SignIn from './Login/SignIn';
 import HomePage from './Product/HomePage';
@@ -18,6 +18,9 @@ import 'slick-carousel/slick/slick-theme.css';
 import ProductTable from './Admin/ProductTable';
 import UserDetailsTable from './Admin/UserDetailsTable';
 import AdvertisementDetailsTable from './Admin/AdvertisementDetailsTable';
+import ProductDetails from './Product/ProductDetails';
+import ViewCart from './Product/ViewCart';
+import UpdateProductPage from './Admin/UpdateProductPage';
 
 
 
@@ -25,7 +28,7 @@ function App() {
     const location = useLocation();
     console.log('Nav bar for console ',location.pathname); 
     const showNavbar = ['/dashboard', '/add-product','/add-advertisement','/add-offer'].includes(location.pathname);
-   const tobottomnavbar = ['/types-of-foods', '/upcoming-foods','/random-foods','/ongoing','/newly-added','/updated-foods','/home','/All','/search-results'].includes(location.pathname);
+   const tobottomnavbar = ['/types-of-foods', '/upcoming-foods','/random-foods','/ongoing','/newly-added','/updated-foods','/home','/All','/search-results','/viewcart'].includes(location.pathname) || matchPath ('/product-details/:productName',location.pathname);
    console.log(location.pathname); 
     return (
         <div className='App'>
@@ -40,11 +43,15 @@ function App() {
                 <Route path="/home" element={<HomePage />} />
 
                 <Route path="/search-results" element={<SearchResults />} />
+                <Route path="/product-details/:productName" element={<ProductDetails />} />
+                <Route path="/viewcart" element={<ViewCart />} />
+
 
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/product-table" element={<ProductTable />} />
                 <Route path="/userdetails-table" element={<UserDetailsTable />} />
                 <Route path="/advertisement-table" element={<AdvertisementDetailsTable />} />
+                <Route path="/update-product/:productName" element={<UpdateProductPage />} />
 
                 <Route path="/add-product" element={<ProductForm />} />
                 <Route path="/add-advertisement" element={<UploadAdForm />} />

@@ -16,7 +16,6 @@ const ProductCard = ({ product }) => {
             </div>
             <div className="product-info">
                 <h3 className="product-name">{product.productName}</h3>
-                <p className="product-description">{product.productDescription}</p>
                 <div className="price-section">
                     <span className="product-price">₹{product.productPrice.toFixed(2)}</span>
                     {product.productOriginalPrice > product.productPrice && (

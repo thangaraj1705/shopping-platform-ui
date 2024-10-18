@@ -2,6 +2,7 @@
   margin: 20px auto;
   width: 90%;
   overflow-x: auto;
+  justify-content: center;
 }
 
 .product-table {
@@ -12,7 +13,7 @@
 }
 
 .product-table th, .product-table td {
-  padding: 12px 15px;
+  padding: 10px 10px;  
   border: 1px solid #ddd;
   text-align: left;
 }
@@ -20,6 +21,7 @@
 .product-table th {
   background-color: #007bff;
   color: white;
+  text-align: center;
 }
 
 .product-table td img {
@@ -30,11 +32,13 @@
 }
 
 .btn {
-  padding: 8px 12px;
+  padding: 10px 40px;
   border: none;
   cursor: pointer;
   font-size: 14px;
   border-radius: 4px;
+  justify-content: center;
+  
 }
 
 .update-btn {
@@ -63,3 +67,4 @@
     height: 40px;
   }
 }
+
