@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styles from './ViewCart.module.css';
+import axios from 'axios';
 
 const ViewCart = () => {
     const location = useLocation();
@@ -17,6 +18,38 @@ const ViewCart = () => {
     const increaseQuantity = () => setQuantity(prevQuantity => prevQuantity + 1);
     const decreaseQuantity = () => {
         if (quantity > 1) setQuantity(prevQuantity => prevQuantity - 1);
+    };
+
+    const addToCart = async () => {
+        try {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                console.error('No JWT token found.');
+                return;
+            }
+            const cartItem = {
+                productId: product.productId,
+                itemQuantity: quantity,
+            };
+
+            const response = await axios.post(`http://localhost:8085/add-to-cart`, cartItem,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                }
+            );
+            console.log("quantity",quantity);
+            if (response.status === 200) {
+                alert("Product added to cart successfully!");
+            }
+        }
+        catch (error) {
+            console.error("Error adding product to cart:", error);
+            alert("Failed to add product to cart. Please try again.");
+        }
+
+
     };
 
     return (
@@ -43,7 +76,7 @@ const ViewCart = () => {
                     <button onClick={increaseQuantity} className={styles.quantityButton}>+</button>
                 </div>
 
-                <button className={styles.addToCartButton}>Add to Cart</button>
+                <button onClick={addToCart} className={styles.addToCartButton}>Add to Cart</button>
             </div>
         </div>
     );

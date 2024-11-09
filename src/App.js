@@ -21,7 +21,7 @@ import AdvertisementDetailsTable from './Admin/AdvertisementDetailsTable';
 import ProductDetails from './Product/ProductDetails';
 import ViewCart from './Product/ViewCart';
 import UpdateProductPage from './Admin/UpdateProductPage';
-
+import UpdateAdPage from './Admin/UpdateAdPage';
 
 
 function App() {
@@ -46,12 +46,13 @@ function App() {
                 <Route path="/product-details/:productName" element={<ProductDetails />} />
                 <Route path="/viewcart" element={<ViewCart />} />
 
-
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/product-table" element={<ProductTable />} />
                 <Route path="/userdetails-table" element={<UserDetailsTable />} />
                 <Route path="/advertisement-table" element={<AdvertisementDetailsTable />} />
+                <Route path="/populate-product/:productName" element={<UpdateProductPage />} />
                 <Route path="/update-product/:productName" element={<UpdateProductPage />} />
+                <Route path="/update-ad/:productAd" element={<UpdateAdPage />} />
 
                 <Route path="/add-product" element={<ProductForm />} />
                 <Route path="/add-advertisement" element={<UploadAdForm />} />

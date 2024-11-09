@@ -12,45 +12,45 @@ const ProductForm = () => {
     const [file, setFile] = useState(null);
 
     //product features
-    const [flavour, setFlavour] = useState('');
-    const [productLife, setProductLife] = useState('');
-    const [storageInstructions, setStorageInstructions] = useState('');
-    const [veg, setVeg] = useState('');
-    const [nonVeg, setNonVeg] = useState('');
+    const [productFeaturesDTO, setProductFeaturesDTO] = useState({
+        flavour: '',
+        productLife: '',
+        storageInstructions: '',
+        veg: '',
+        nonVeg: ''
+    });
 
     //Nutrition info
-    const [calories, setCalories] = useState('');
-    const [fats, setFats] = useState('');
-    const [proteins, setProteins] = useState('');
-    const [carbohydrates, setCarbohydrates] = useState('');
-    const [sugar, setSugar] = useState('');
+    const [nutritionInfoDTO, setNutritionInfoDTO] = useState({
+        calories: '',   
+        fats: '',
+        proteins: '',
+        carbohydrates: '',
+        sugar: '',
+        calorieUnit: 'kcal',
+        fatUnit: 'g',
+        proteinUnit: 'g',
+        carbohydrateUnit: 'g',
+        sugarUnit: 'g'
+    });
 
-    //Unit Measurement
-    const [calorieUnit, setCalorieUnit] = useState('kcal');
-    const [fatUnit, setFatUnit] = useState('g');
-    const [proteinUnit, setProteinUnit] = useState('g');
-    const [carbohydrateUnit, setCarbohydrateUnit] = useState('g');
-    const [sugarUnit, setSugarUnit] = useState('g');
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        const productRequestDTO = {
+            productName,
+            productDescription,
+            productPrice,
+            productDiscount,
+            quantityInStock,
+            productFeaturesDTO,
+            nutritionInfoDTO
+        };
+
         const formData = new FormData();
-        formData.append('productName', productName);
-        formData.append('productDescription', productDescription);
-        formData.append('productPrice', productPrice);
-        formData.append('productDiscount', productDiscount);
-        formData.append('quantityInStock', quantityInStock);
-        formData.append('flavour', flavour);
-        formData.append('productLife', productLife);
-        formData.append('storageInstructions', storageInstructions);
-        formData.append('veg', veg);
-        formData.append('nonVeg', nonVeg);
-        formData.append('calories', `${calories} ${calorieUnit}`);
-        formData.append('fats', `${fats} ${fatUnit}`);
-        formData.append('proteins', `${proteins} ${proteinUnit}`);
-        formData.append('carbohydrates', `${carbohydrates} ${carbohydrateUnit}`);
-        formData.append('sugar', `${sugar} ${sugarUnit}`);
+        formData.append('ProductRequestDTO', new Blob([JSON.stringify(productRequestDTO)], { type: "application/json" }));
+        
         if (file) formData.append('file', file);
 
         try {
@@ -67,31 +67,41 @@ const ProductForm = () => {
                 }
             });
             console.log('Product saved successfully:', response.data);
-
-            setProductName('');
-            setProductDescription('');
-            setProductPrice('');
-            setProductDiscount('');
-            setQuantityInStock('')
-            setFile('');
-            setFlavour('');
-            setProductLife('');
-            setStorageInstructions('');
-            setVeg('');
-            setNonVeg('');
-            setCalories('');
-            setFats('');
-            setProteins('');
-            setCarbohydrates('');
-            setSugar('');
-
+            resetForm();
+           
 
 
         } catch (error) {
             console.error('Error saving product:', error);
         }
     };
-
+    const resetForm = () => {
+        setProductName('');
+        setProductDescription('');
+        setProductPrice('');
+        setProductDiscount('');
+        setQuantityInStock('');
+        setFile(null);
+        setProductFeaturesDTO({
+            flavour: '',
+            productLife: '',
+            storageInstructions: '',
+            veg: '',
+            nonVeg: ''
+        });
+        setNutritionInfoDTO({
+            calories: '',
+            fats: '',
+            proteins: '',
+            carbohydrates: '',
+            sugar: '',
+            calorieUnit: 'kcal',
+            fatUnit: 'g',
+            proteinUnit: 'g',
+            carbohydrateUnit: 'g',
+            sugarUnit: 'g'
+        });
+    };
     return (
         <div className="product-form-container">
             <h1 className="form-title">Add New Product</h1>
@@ -153,8 +163,8 @@ const ProductForm = () => {
                     <input
                         type="text"
                         id="flavour"
-                        value={flavour}
-                        onChange={(e) => setFlavour(e.target.value)}
+                        value={productFeaturesDTO.flavour}
+                        onChange={(e) => setProductFeaturesDTO({ ...productFeaturesDTO, flavour: e.target.value })}
                         className="form-input"
                     />
                 </div>
@@ -163,8 +173,8 @@ const ProductForm = () => {
                     <input
                         type="text"
                         id="productLife"
-                        value={productLife}
-                        onChange={(e) => setProductLife(e.target.value)}
+                        value={productFeaturesDTO.productLife}
+                        onChange={(e) => setProductFeaturesDTO({ ...productFeaturesDTO, productLife: e.target.value })}
                         className="form-input"
                     />
                 </div>
@@ -173,8 +183,8 @@ const ProductForm = () => {
                     <input
                         type="text"
                         id="storageInstructions"
-                        value={storageInstructions}
-                        onChange={(e) => setStorageInstructions(e.target.value)}
+                        value={productFeaturesDTO.storageInstructions}
+                        onChange={(e) => setProductFeaturesDTO({ ...productFeaturesDTO, storageInstructions: e.target.value })}
                         className="form-input"
                     />
                 </div>
@@ -185,8 +195,8 @@ const ProductForm = () => {
                             <input
                                 type="radio"
                                 value="Yes"
-                                checked={veg === 'Yes'}
-                                onChange={() => setVeg('Yes')}
+                                checked={productFeaturesDTO.veg === 'Yes'}
+                                onChange={(e) => setProductFeaturesDTO({ ...productFeaturesDTO, veg: e.target.value })}
                             />
                             Yes
                         </label>
@@ -194,8 +204,8 @@ const ProductForm = () => {
                             <input
                                 type="radio"
                                 value="No"
-                                checked={veg === 'No'}
-                                onChange={() => setVeg('No')}
+                                checked={productFeaturesDTO.veg === 'No'}
+                                onChange={(e) => setProductFeaturesDTO({ ...productFeaturesDTO, veg: e.target.value })}
                             />
                             No
                         </label>
@@ -207,8 +217,8 @@ const ProductForm = () => {
                             <input
                                 type="radio"
                                 value="Yes"
-                                checked={nonVeg === 'Yes'}
-                                onChange={() => setNonVeg('Yes')}
+                                checked={productFeaturesDTO.nonVeg === 'Yes'}
+                                onChange={(e) => setProductFeaturesDTO({ ...productFeaturesDTO, nonVeg: e.target.value })}
                             />
                             Yes
                         </label>
@@ -216,8 +226,8 @@ const ProductForm = () => {
                             <input
                                 type="radio"
                                 value="No"
-                                checked={nonVeg === 'No'}
-                                onChange={() => setNonVeg('No')}
+                                checked={productFeaturesDTO.nonVeg === 'No'}
+                                onChange={(e) => setProductFeaturesDTO({ ...productFeaturesDTO, nonVeg: e.target.value })}
                             />
                             No
                         </label>
@@ -231,13 +241,13 @@ const ProductForm = () => {
                         <input
                             type="number"
                             id="calories"
-                            value={calories}
-                            onChange={(e) => setCalories(e.target.value)}
+                            value={nutritionInfoDTO.calories}
+                            onChange={(e) => setNutritionInfoDTO({ ...nutritionInfoDTO, calories: e.target.value })}
                             className="form-input-nutrition"
                         />
                         <select
-                            value={calorieUnit}
-                            onChange={(e) => setCalorieUnit(e.target.value)}
+                            value={nutritionInfoDTO.calorieUnit}
+                            onChange={(e) => setNutritionInfoDTO({ ...nutritionInfoDTO, calorieUnit: e.target.value })}
                             className="form-select">
 
                             <option value="kcal">kcal</option>
@@ -251,13 +261,13 @@ const ProductForm = () => {
                         <input
                             type="number"
                             id="fats"
-                            value={fats}
-                            onChange={(e) => setFats(e.target.value)}
+                            value={nutritionInfoDTO.fats}
+                            onChange={(e) => setNutritionInfoDTO({ ...nutritionInfoDTO, fats: e.target.value })}
                             className="form-input-nutrition"
                         />
                         <select
-                            value={fatUnit}
-                            onChange={(e) => setFatUnit(e.target.value)}
+                            value={nutritionInfoDTO.fatUnit}
+                            onChange={(e) => setNutritionInfoDTO({ ...nutritionInfoDTO, fatUnit: e.target.value })}
                             className="form-select">
 
                             <option value="g">g</option>
@@ -272,13 +282,13 @@ const ProductForm = () => {
                         <input
                             type="number"
                             id="proteins"
-                            value={proteins}
-                            onChange={(e) => setProteins(e.target.value)}
+                            value={nutritionInfoDTO.proteins}
+                            onChange={(e) => setNutritionInfoDTO({ ...nutritionInfoDTO, proteins: e.target.value })}
                             className="form-input-nutrition"
                         />
                         <select
-                            value={proteinUnit}
-                            onChange={(e) => setProteinUnit(e.target.value)}
+                            value={nutritionInfoDTO.proteinUnit}
+                            onChange={(e) => setNutritionInfoDTO({ ...nutritionInfoDTO, proteinUnit: e.target.value })}
                             className="form-select">
 
                             <option value="g">g</option>
@@ -293,13 +303,13 @@ const ProductForm = () => {
                         <input
                             type="number"
                             id="carbohydrates"
-                            value={carbohydrates}
-                            onChange={(e) => setCarbohydrates(e.target.value)}
+                            value={nutritionInfoDTO.carbohydrates}
+                            onChange={(e) => setNutritionInfoDTO({ ...nutritionInfoDTO, carbohydrates: e.target.value })}
                            className="form-input-nutrition"
                         />
                         <select
-                            value={carbohydrateUnit}
-                            onChange={(e) => setCarbohydrateUnit(e.target.value)}
+                            value={nutritionInfoDTO.carbohydrateUnit}
+                            onChange={(e) => setNutritionInfoDTO({ ...nutritionInfoDTO, carbohydrateUnit: e.target.value })}
                             className="form-select">
 
                             <option value="g">g</option>
@@ -314,13 +324,13 @@ const ProductForm = () => {
                         <input
                             type="number"
                             id="sugar"
-                            value={sugar}
-                            onChange={(e) => setSugar(e.target.value)}
+                            value={nutritionInfoDTO.sugar}
+                            onChange={(e) => setNutritionInfoDTO({ ...nutritionInfoDTO, sugar: e.target.value })}
                             className="form-input-nutrition"
                         />
                         <select
-                            value={sugarUnit}
-                            onChange={(e) => setSugarUnit(e.target.value)}
+                            value={nutritionInfoDTO.sugarUnit}
+                            onChange={(e) => setNutritionInfoDTO({ ...nutritionInfoDTO, sugarUnit: e.target.value })}
                             className="form-select">
 
                             <option value="g">g</option>

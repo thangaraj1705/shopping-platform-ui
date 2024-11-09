@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ProductTable.css';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const AdvertisementDetailsTable = () => {
   const [ads, setAds] = useState([]);
+  const navigate=useNavigate();
 
   useEffect(() => {
     fetchAds();
@@ -47,9 +49,10 @@ const AdvertisementDetailsTable = () => {
     }
   };
 
-  const handleUpdate = (id) => {
-    console.log(`Update ad with ID: ${id}`);
-    // Add update logic here
+  const handleUpdate = (id, name) => {
+    navigate(`/update-ad/${encodeURIComponent(name)}`, {
+      state: { advertisementId: id }, 
+    });
   };
 
   return (
@@ -72,7 +75,7 @@ const AdvertisementDetailsTable = () => {
               <td>{ad.productAd}</td>
               <td>{ad.discountPercentage}</td>
               <td>
-                <button className="btn update-btn" onClick={() => handleUpdate(ad.advertisementId)}>
+                <button className="btn update-btn" onClick={() => handleUpdate(ad.advertisementId,ad.productAd)}>
                   <FaEdit /> Update
                 </button>
                 <button className="btn delete-btn" onClick={() => handleDelete(ad.advertisementId)}>

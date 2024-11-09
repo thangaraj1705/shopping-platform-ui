@@ -1,49 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import './ProductForm.css';
 
 const UpdateProductPage = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { productId } = location.state;
+  const { productId } = location.state || {};
   const productName = location.pathname.split("/")[2];
-  const [selectedFile]=useState(null);
 
+  const [selectedFile, setSelectedFile] = useState(null);
   const [productData, setProductData] = useState({
     productName: '',
     productDescription: '',
     productPrice: 0,
     productDiscount: 0,
     productImgPath: '',
-    productRating: 0,
     quantityInStock: 0,
-    productFeatures: '',
-    nutritionInfo: ''
+    productFeaturesDTO: { flavour: '', productLife: '', storageInstructions: '', veg: '', nonVeg: '' },
+    nutritionInfoDTO: { calories: 0, calorieUnit: 'kcal', fats: 0, fatUnit: '', proteins: 0, proteinUnit: 'g', carbohydrates: 0, carbohydrateUnit: 'g', sugar: 0, sugarUnit: 'g' }
   });
-
 
   useEffect(() => {
     const fetchProductData = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
-
         if (!token) {
           console.error('No JWT token found.');
           return;
         }
 
-        const response = await axios.get(`http://localhost:8085/update-product/${productName}`, {
-          params: {
-            productId: productId,
-          },
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+        const response = await axios.get(`http://localhost:8085/populate-product/${productName}`, {
+          params: { productId: productId },
+          headers: { 'Authorization': `Bearer ${token}` },
         });
 
         if (response.status === 200) {
-          setProductData(response.data);
+          const data = response.data;
+
+          setProductData({
+            productName: data.productName || '',
+            productDescription: data.productDescription || '',
+            productPrice: data.productPrice || 0,
+            productDiscount: data.productDiscount || 0,
+            productImgPath: data.productImgPath || '',
+            quantityInStock: data.quantityInStock || 0,
+            productFeaturesDTO: {
+              flavour: data.productFeatures?.flavour || '',
+              productLife: data.productFeatures?.productLife || '',
+              storageInstructions: data.productFeatures?.storageInstructions || '',
+              veg: data.productFeatures?.veg || null,
+              nonVeg: data.productFeatures?.nonVeg || null
+            },
+            nutritionInfoDTO: {
+              calories: data.nutritionInfo?.calories || 0,
+              calorieUnit: data.nutritionInfo?.calorieUnit || 'kcal',
+              fats: data.nutritionInfo?.fats || 0,
+              fatUnit: data.nutritionInfo?.fatUnit || 'g',
+              proteins: data.nutritionInfo?.proteins || 0,
+              proteinUnit: data.nutritionInfo?.proteinUnit || 'g',
+              carbohydrates: data.nutritionInfo?.carbohydrates || 0,
+              carbohydrateUnit: data.nutritionInfo?.carbohydrateUnit || 'g',
+              sugar: data.nutritionInfo?.sugar || 0,
+              sugarUnit: data.nutritionInfo?.sugarUnit || 'g'
+            }
+          });
+          console.log('Features dto data : ',data.productFeaturesDTO);
+          console.log('nutrition dto data : ',data.nutritionInfoDTO);
         } else {
           alert('Product not found or no content!');
         }
@@ -55,32 +77,70 @@ const UpdateProductPage = () => {
     fetchProductData();
   }, [productId, productName]);
 
-
   const handleInputChange = (e) => {
-    setProductData({
-      ...productData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setProductData((prevState) => ({
+        ...prevState,
+        [parent]: { ...prevState[parent], [child]: value }
+      }));
+    } else {
+      setProductData({ ...productData, [name]: value });
+    }
   };
 
-  const handleUpdateProduct = () => {
-    // Create FormData to send file along with product data
-    const formData = new FormData();
-    formData.append('file', selectedFile); // selectedFile is the image file
-    formData.append('productRequestDTO', new Blob([JSON.stringify(productData)], { type: 'application/json' }));
-  
-    axios.put(`/update-product/${productId}/${productData.productName}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data', // Important for file uploads
-      },
-    })
-      .then(() => {
-        alert('Product updated successfully!');
-        navigate('/product-table');
-      })
-      .catch(error => console.error('Error updating product:', error));
+  const handleFileChange = (e) => {
+    const file = e.target.files[0] || null;
+    setSelectedFile(file);
   };
-  
+
+  const handleUpdateProduct = async () => {
+    const formData = new FormData();
+    formData.append("productId", productId);
+    formData.append("productName", productData.productName);
+
+    const productRequestDTO = {
+      productName: productData.productName,
+      productDescription: productData.productDescription,
+      productPrice: productData.productPrice,
+      productDiscount: productData.productDiscount,
+      productImgPath: productData.productImgPath,
+      quantityInStock: productData.quantityInStock,
+      productFeaturesDTO: productData.productFeaturesDTO,
+      nutritionInfoDTO: productData.nutritionInfoDTO
+    };
+    formData.append("ProductRequestDTO", new Blob([JSON.stringify(productRequestDTO)], { type: 'application/json' }));
+
+    if (selectedFile) {
+      formData.append("file", selectedFile);
+    }
+
+    try {
+      const token = localStorage.getItem('jwtToken');
+      const response = await axios.put(
+        `http://localhost:8085/update-product/${productName}`,
+        formData,
+        {
+          params: { productId: productId },
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert('Product updated successfully!');
+      } else {
+        alert('Failed to update product');
+      }
+    } catch (error) {
+      console.error('Error updating product:', error.response ? error.response.data : error.message);
+    }
+  };
+
+
 
   return (
     <div className="product-form-container">
@@ -91,6 +151,7 @@ const UpdateProductPage = () => {
           <input
             type="text"
             id="productName"
+            name="productName"
             value={productData.productName}
             onChange={handleInputChange}
             required
@@ -102,6 +163,7 @@ const UpdateProductPage = () => {
           <label htmlFor="productDescription"><i className="fas fa-info-circle"></i> Description</label>
           <textarea
             id="productDescription"
+            name="productDescription"
             value={productData.productDescription}
             onChange={handleInputChange}
             required
@@ -114,6 +176,7 @@ const UpdateProductPage = () => {
           <input
             type="number"
             id="productPrice"
+            name="productPrice"
             value={productData.productPrice}
             onChange={handleInputChange}
             required
@@ -126,6 +189,7 @@ const UpdateProductPage = () => {
           <input
             type="number"
             id="productDiscount"
+            name="productDiscount"
             value={productData.productDiscount}
             onChange={handleInputChange}
             className="form-input"
@@ -137,6 +201,7 @@ const UpdateProductPage = () => {
           <input
             type="number"
             id="quantityInStock"
+            name="quantityInStock"
             value={productData.quantityInStock}
             onChange={handleInputChange}
             className="form-input"
@@ -148,7 +213,8 @@ const UpdateProductPage = () => {
           <input
             type="text"
             id="flavour"
-            value={productData.productFeatures.flavour}
+            name="productFeaturesDTO.flavour"
+            value={productData.productFeaturesDTO?.flavour || ''}
             onChange={handleInputChange}
             className="form-input"
           />
@@ -158,7 +224,8 @@ const UpdateProductPage = () => {
           <input
             type="text"
             id="productLife"
-            value={productData.productFeatures.productLife}
+            name="productFeaturesDTO.productLife"
+            value={productData.productFeaturesDTO.productLife}
             onChange={handleInputChange}
             className="form-input"
           />
@@ -169,7 +236,8 @@ const UpdateProductPage = () => {
           <input
             type="text"
             id="storageInstructions"
-            value={productData.productFeatures.storageInstructions}
+            name="productFeaturesDTO.storageInstructions"
+            value={productData.productFeaturesDTO.storageInstructions}
             onChange={handleInputChange}
             className="form-input"
           />
@@ -181,7 +249,8 @@ const UpdateProductPage = () => {
               <input
                 type="radio"
                 value="Yes"
-                checked={productData.productFeatures.veg === 'Yes'}
+                name="productFeaturesDTO.veg"
+                checked={productData.productFeaturesDTO.veg === 'Yes'}
                 onChange={handleInputChange}
               />
               Yes
@@ -190,7 +259,8 @@ const UpdateProductPage = () => {
               <input
                 type="radio"
                 value="No"
-                checked={productData.productFeatures.veg === 'No'}
+                name="productFeaturesDTO.veg"
+                checked={productData.productFeaturesDTO.veg === 'No'}
                 onChange={handleInputChange}
               />
               No
@@ -203,7 +273,8 @@ const UpdateProductPage = () => {
               <input
                 type="radio"
                 value="Yes"
-                checked={productData.productFeatures.nonVeg === 'Yes'}
+                name="productFeaturesDTO.nonVeg"
+                checked={productData.productFeaturesDTO.nonVeg === 'Yes'}
                 onChange={handleInputChange}
               />
               Yes
@@ -212,7 +283,8 @@ const UpdateProductPage = () => {
               <input
                 type="radio"
                 value="No"
-                checked={productData.productFeatures.nonVeg === 'No'}
+                name="productFeaturesDTO.nonVeg"
+                checked={productData.productFeaturesDTO.nonVeg === 'No'}
                 onChange={handleInputChange}
               />
               No
@@ -225,12 +297,14 @@ const UpdateProductPage = () => {
             <input
               type="number"
               id="calories"
-              value={productData.nutritionInfo.calories}
+              name="nutritionInfoDTO.calories"
+              value={productData.nutritionInfoDTO.calories}
               onChange={handleInputChange}
               className="form-input-nutrition"
             />
             <select
-              value={productData.nutritionInfo.calorieUnit}
+              name="nutritionInfoDTO.calorieUnit"
+              value={productData.nutritionInfoDTO.calorieUnit}
               onChange={handleInputChange}
               className="form-select">
 
@@ -245,12 +319,14 @@ const UpdateProductPage = () => {
             <input
               type="number"
               id="fats"
-              value={productData.nutritionInfo.fats}
+              name="nutritionInfoDTO.fats"
+              value={productData.nutritionInfoDTO.fats}
               onChange={handleInputChange}
               className="form-input-nutrition"
             />
             <select
-              value={productData.nutritionInfo.fatUnit}
+              name="nutritionInfoDTO.fatUnit"
+              value={productData.nutritionInfoDTO.fatUnit}
               onChange={handleInputChange}
               className="form-select">
 
@@ -266,12 +342,14 @@ const UpdateProductPage = () => {
             <input
               type="number"
               id="proteins"
-              value={productData.nutritionInfo.proteins}
+              name="nutritionInfoDTO.proteins"
+              value={productData.nutritionInfoDTO.proteins}
               onChange={handleInputChange}
               className="form-input-nutrition"
             />
             <select
-              value={productData.nutritionInfo.proteinUnit}
+              name="nutritionInfoDTO.proteinUnit"
+              value={productData.nutritionInfoDTO.proteinUnit}
               onChange={handleInputChange}
               className="form-select">
 
@@ -287,12 +365,14 @@ const UpdateProductPage = () => {
             <input
               type="number"
               id="carbohydrates"
-              value={productData.nutritionInfo.carbohydrates}
+              name="nutritionInfoDTO.carbohydrates"
+              value={productData.nutritionInfoDTO.carbohydrates}
               onChange={handleInputChange}
               className="form-input-nutrition"
             />
             <select
-              value={productData.nutritionInfo.carbohydrateUnit}
+              name="nutritionInfoDTO.carbohydrateUnit"
+              value={productData.nutritionInfoDTO.carbohydrateUnit}
               onChange={handleInputChange}
               className="form-select">
 
@@ -308,12 +388,14 @@ const UpdateProductPage = () => {
             <input
               type="number"
               id="sugar"
-              value={productData.nutritionInfo.sugar}
+              name="nutritionInfoDTO.sugar"
+              value={productData.nutritionInfoDTO.sugar}
               onChange={handleInputChange}
               className="form-input-nutrition"
             />
             <select
-              value={productData.nutritionInfo.sugarUnit}
+              name="nutritionInfoDTO.sugarUnit"
+              value={productData.nutritionInfoDTO.sugarUnit}
               onChange={handleInputChange}
               className="form-select">
 
@@ -328,7 +410,7 @@ const UpdateProductPage = () => {
           <input
             type="file"
             id="file"
-            onChange={handleInputChange}
+            onChange={handleFileChange}
             className="form-input"
           />
         </div>
