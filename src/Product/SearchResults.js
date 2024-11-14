@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import axios from 'axios';
-import './SearchResults.css';
+import './SearchResults.css';   
+import './ProductCard.css';
 
 const SearchResults = () => {
     const location = useLocation();

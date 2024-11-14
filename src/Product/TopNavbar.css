@@ -9,10 +9,6 @@
     box-sizing: border-box;  
 }
 
-.logo {
-    font-size: 1.5em;
-    font-weight: bold;
-}
 
 .search-container {
     flex: 1;
@@ -58,4 +54,27 @@
 
 .login-icon:hover, .cart-icon:hover {
     color: #0bd43e; 
+}
+
+.logo {
+    display: flex;
+    margin-left: 50px;
+    align-items: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+.logo-symbol {
+    margin-right: 5px;
+    margin-left: 20px;
+    font-size: 1.8em;
+    color: #FFD700;
+}
+
+.logo-text {
+    font-family: 'Pacifico', cursive;
+    font-size: 1.6em;
+    color: #FFFFFF; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); 
 }

@@ -3,6 +3,7 @@ import axios from 'axios';
 import './TopNavbar.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUserCircle, FaShoppingCart } from 'react-icons/fa';
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto:wght@700&display=swap" rel="stylesheet"></link>
 
 const TopNavbar = () => {
     const [searchProduct, setSearchProduct] = useState('');
@@ -27,13 +28,13 @@ const TopNavbar = () => {
             }
 
             const response = await axios.get(`http://localhost:8085/search`, {
-                params: { name: searchProduct }, 
+                params: { name: searchProduct },
                 headers: {
-                    'Authorization': `Bearer ${token}`, 
+                    'Authorization': `Bearer ${token}`,
                 }
             });
 
-         
+
             navigate('/search-results', { state: { products: response.data } });
 
         } catch (err) {
@@ -46,7 +47,10 @@ const TopNavbar = () => {
 
     return (
         <div className="top-navbar">
-            <div className="logo">Your Logo</div>
+            <div className="logo">
+                <span className="logo-symbol">👨‍🍳</span>
+                <span className="logo-text">Kitchen Hub</span>
+            </div>
             <div className="search-container">
                 <input
                     type="text"
